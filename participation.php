@@ -1,8 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['nom']) || !isset($_SESSION['prenom'])) {
-  $location = './login.php';
-  header('location:' . $location);
+  header('Location: ./login.php');
+  exit;
 }
 
 $mois = [
@@ -20,11 +20,10 @@ $mois = [
   12 => "Décembre",
 ];
 
-$mois_actuelle = (int) date('n')
-
-  ?>
+$mois_actuelle = (int) date('n');
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -52,56 +51,23 @@ $mois_actuelle = (int) date('n')
     });
   </script>
 
-
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="assets/css/plugins.min.css" />
   <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
-
-
   <link rel="stylesheet" href="assets/css/demo.css" />
+
+  <!-- Select2 CSS local -->
+  <link href="assets/select2/select2.min.css" rel="stylesheet" />
+
+  <style>
+    /* Pour améliorer le rendu multi-select et alignement */
+    .select2-container--default .select2-selection--multiple {
+      min-height: 38px;
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+    }
+  </style>
 </head>
-
-<style>
-  .content {
-    background: white;
-    position: absolute;
-    color: #000;
-    border-radius: 7px;
-    margin-top: 15px;
-    width: 100%;
-    z-index: 999;
-    display: none;
-
-
-  }
-
-  .content input {
-    margin-top: 20px;
-  }
-
-  .options {
-    max-height: 145px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    padding: 0;
-  }
-
-  .options li {
-    padding: 10px 15px;
-    list-style: none;
-    font-size: 15px;
-    cursor: pointer;
-    border-bottom: 1px solid gray;
-  }
-
-  .options li:hover {}
-
-
-
-  .select-box.active .content {
-    display: block;
-  }
-</style>
 
 <body>
   <div class="wrapper">
@@ -113,89 +79,67 @@ $mois_actuelle = (int) date('n')
         <div class="page-inner">
           <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
-              <h3 class="fw-bold mb-3">Enregistrement des mensualites</h3>
-
+              <h3 class="fw-bold mb-3">Enregistrement des mensualités</h3>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
               <a href="mensualites.php" class="btn btn-danger btn-round">Annuler</a>
             </div>
           </div>
-          <?php
-          if (isset($_SESSION['message'])) {
-            ?>
-            <div class="alert alert-success">
-              <?= $_SESSION['message'] ?>
-            </div>
 
-            <?php
+          <?php if (isset($_SESSION['message'])): ?>
+            <div class="alert alert-success"><?= $_SESSION['message'] ?></div>
+          <?php elseif (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
+          <?php endif; 
+          unset($_SESSION['message'], $_SESSION['error']);
+          ?>
 
-          } elseif (isset($_SESSION['error'])) {
-            ?>
-            <div class="alert alert-danger">
-              <?= $_SESSION['error'] ?>
-            </div>
-          <?php }
-          unset($_SESSION['message']);
-          unset($_SESSION['error'])
-
-            ?>
           <div class="row row-card-no-pd d-flex justify-content-center">
             <div class="col-md-12">
               <div class="card centered">
-
                 <form class="row g-3" action="./traitement/addMensualite.php" method="post">
+                  
                   <div class="col-md-12">
                     <label for="montant" class="form-label">Montant</label>
-                    <input type="number" class="form-control" id="montant" name="montant" min="200" value="200"
-                      required>
+                    <input type="number" class="form-control" id="montant" name="montant" min="200" value="200" required>
                   </div>
+
                   <div class="col-md-12">
-                    <label for="prenom" class="form-label">Date payement</label>
-                    <input type="text" class="form-control" id="datepayement" name="datepayement"
-                      value="<?= date("Y-m-d") ?>" readonly="true">
+                    <label for="datepayement" class="form-label">Date paiement</label>
+                    <input type="text" class="form-control" id="datepayement" name="datepayement" value="<?= date("Y-m-d") ?>" readonly>
                   </div>
+
                   <div class="col-md-12">
-                    <label for="mois" class="form-label">Mois</label>
-                    <select name="id_mois" id="" class="form-control">
+                    <label for="id_mois" class="form-label">Mois</label>
+                    <select name="id_mois" id="id_mois" class="form-control select2-single" required>
                       <?php foreach ($mois as $key => $value): ?>
-                        <option value="<?= $key; ?>" <?= $key === $mois_actuelle ? "selected" : ""; ?>>
-                          <?= $value; ?>
+                        <option value="<?= $key ?>" <?= $key === $mois_actuelle ? "selected" : "" ?>>
+                          <?= $value ?>
                         </option>
                       <?php endforeach; ?>
                     </select>
-
                   </div>
 
-                  <div class="col-md-12 select-box">
-                    <div class="col-md-12">
-                      <label for="id_membre" class="form-label">Participant</label>
-                      <input type="text" class="form-control mb-3 select-option" placeholder="Sélectionner un membre"
-                        id="soValue" readonly name="id" style="cursor: pointer;">
+                  <div class="col-md-12">
+                    <label for="idm" class="form-label">Participant(s)</label>
+                    <select id="idm" name="idm[]" class="form-control select2-multiple" multiple="multiple" required>
+                      <?php
+                      require './traitement/connect.php';
+                      $pst = $con->prepare('SELECT * FROM membres ORDER BY nom,prenom');
+                      $pst->execute();
+                      $res = $pst->fetchAll(PDO::FETCH_ASSOC);
 
-                    </div>
-                    <div class="col-md-12 content" style="position:relative">
-                      <input type="hidden" id="idm" class="form-control mb-3" name="idm">
-                      <input type="text" id="optionSearch" class="form-control mb-3" placeholder="Rechercher" id=""
-                        name="id">
-                      <ul class="options">
-                        <?php
-                        require './traitement/connect.php';
-
-                        $pst = $con->prepare('SELECT * FROM membres ORDER BY nom,prenom');
-                        $pst->execute();
-                        $res = $pst->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($res as $rs) {
-                          ?>
-                          <li data-id="<?= $rs['id'] ?>"><?= $rs['nom'] . ' ' . $rs['prenom'] ?></li>
-                        <?php } ?>
-                      </ul>
-                    </div>
+                      foreach ($res as $rs) {
+                        $nomComplet = htmlspecialchars($rs['nom'] . ' ' . $rs['prenom']);
+                        echo "<option value=\"{$rs['id']}\">{$nomComplet}</option>";
+                      }
+                      ?>
+                    </select>
+                    <small class="form-text text-muted">Vous pouvez sélectionner plusieurs membres (Ctrl+clic ou Cmd+clic)</small>
                   </div>
 
                   <div class="col-12">
-
                     <button type="submit" class="btn btn-primary">Ajouter maintenant</button>
-
                   </div>
                 </form>
               </div>
@@ -205,76 +149,44 @@ $mois_actuelle = (int) date('n')
         </div>
       </div>
 
+      <!-- JS scripts -->
       <script src="assets/js/core/jquery-3.7.1.min.js"></script>
       <script src="assets/js/core/popper.min.js"></script>
       <script src="assets/js/core/bootstrap.min.js"></script>
       <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
       <script src="assets/js/plugin/chart.js/chart.min.js"></script>
-
       <script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-
       <script src="assets/js/plugin/chart-circle/circles.min.js"></script>
-
       <script src="assets/js/plugin/datatables/datatables.min.js"></script>
       <script src="assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
       <script src="assets/js/plugin/jsvectormap/world.js"></script>
-
       <script src="assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-
       <script src="assets/js/kaiadmin.min.js"></script>
-
       <script src="assets/js/setting-demo.js"></script>
       <script src="assets/js/demo.js"></script>
 
+      <!-- Select2 JS local -->
+      <script src="assets/select2/select2.min.js"></script>
+
       <script>
+        $(document).ready(function() {
+          // Select simple (mois)
+          $('.select2-single').select2({
+            placeholder: "Sélectionnez un mois",
+            minimumResultsForSearch: Infinity, // cache la recherche car peu d'options
+            width: '100%'
+          });
 
-
-
-        const selectbox = document.querySelector(".select-box");
-        const selectOption = document.querySelector(".select-option");
-        const soValue = document.querySelector("#soValue");
-        const optionsearch = document.querySelector("#optionSearch");
-        const options = document.querySelector(".options");
-        const optionList = document.querySelectorAll(".options li");
-
-        selectOption.addEventListener('click', () => {
-          selectbox.classList.toggle('active');
-        })
-
-        optionList.forEach(element => {
-          element.addEventListener('click', () => {
-            text = element.textContent;
-            soValue.value = text;
-            document.querySelector('#idm').value = element.getAttribute('data-id')
-            selectbox.classList.remove('active')
-          })
+          // Select multiple (membres)
+          $('.select2-multiple').select2({
+            placeholder: "Sélectionnez un ou plusieurs membres",
+            width: '100%'
+          });
         });
-
-        optionsearch.addEventListener('input', () => {
-          var filter, li, i, textvalue;
-          filter = optionsearch.value.toUpperCase();
-          li = options.getElementsByTagName('li');
-          for (i = 0; i <= li.length; i++) {
-            liCount = li[i];
-            textvalue = liCount.textContent || liCount.innerText;
-
-
-
-            if (textvalue.indexOf(filter) > -1) {
-              li[i].style.display = '';
-            } else {
-              li[i].style.display = 'none';
-            }
-          }
-
-        });
-
-
-
-
-
       </script>
 
+    </div>
+  </div>
 </body>
 
 </html>

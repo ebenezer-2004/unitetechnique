@@ -203,26 +203,59 @@ $res = $pst->fetchAll(PDO::FETCH_ASSOC);
         <?php } ?>
       </div>
 
-      <?php if ($res) { ?>
-        <nav aria-label="Page navigation" class="mt-4">
-          <ul class="pagination justify-content-center">
-            <li class="page-item <?= $current == 1 ? 'disabled' : '' ?>">
-              <a class="page-link"
-                href="?page=<?= $current - 1 ?>&search=<?= urlencode($search) ?>">Précédent</a>
-            </li>
-            <?php for ($i = 1; $i <= $pages; $i++) { ?>
-              <li class="page-item <?= $i == $current ? 'active' : '' ?>">
-                <a class="page-link"
-                  href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
-              </li>
-            <?php } ?>
-            <li class="page-item <?= $current == $pages ? 'disabled' : '' ?>">
-              <a class="page-link"
-                href="?page=<?= $current + 1 ?>&search=<?= urlencode($search) ?>">Suivant</a>
-            </li>
-          </ul>
-        </nav>
-      <?php } ?>
+    <?php if ($res) {
+  $range = 10; // Nombre de pages visibles à la fois
+  $start = max(1, $current - floor($range / 2));
+  $end = min($pages, $start + $range - 1);
+
+  if ($end - $start + 1 < $range) {
+    $start = max(1, $end - $range + 1);
+  }
+?>
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+
+      <!-- Précédent -->
+      <li class="page-item <?= $current == 1 ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $current - 1 ?>&search=<?= urlencode($search) ?>">Précédent</a>
+      </li>
+
+      <!-- Première page + "..." -->
+      <?php if ($start > 1): ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=1&search=<?= urlencode($search) ?>">1</a>
+        </li>
+        <?php if ($start > 2): ?>
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <!-- Pages visibles -->
+      <?php for ($i = $start; $i <= $end; $i++): ?>
+        <li class="page-item <?= $i == $current ? 'active' : '' ?>">
+          <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+
+      <!-- "..." + Dernière page -->
+      <?php if ($end < $pages): ?>
+        <?php if ($end < $pages - 1): ?>
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+        <?php endif; ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=<?= $pages ?>&search=<?= urlencode($search) ?>"><?= $pages ?></a>
+        </li>
+      <?php endif; ?>
+
+      <!-- Suivant -->
+      <li class="page-item <?= $current == $pages ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $current + 1 ?>&search=<?= urlencode($search) ?>">Suivant</a>
+      </li>
+
+    </ul>
+  </nav>
+<?php } ?>
+
     </div>
   </div>
 </div>
