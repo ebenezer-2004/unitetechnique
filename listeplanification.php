@@ -32,14 +32,14 @@ $query = "SELECT * FROM autres_cotisations";
 if (!empty($search)) {
   $query .= " WHERE motif_acotisation LIKE :search ";
 }
-$query .= " ORDER BY id_ac DESC LIMIT :offset, :parpage ";
+// $query .= " ORDER BY id_ac DESC LIMIT :offset, :parpage ";
 
 $pst = $con->prepare($query);
 if (!empty($search)) {
   $pst->bindValue(':search', "%$search%", PDO::PARAM_STR);
 }
-$pst->bindValue(':offset', $offset, PDO::PARAM_INT);
-$pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
+// $pst->bindValue(':offset', $offset, PDO::PARAM_INT);
+// $pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
 $pst->execute();
 $res = $pst->fetchAll(PDO::FETCH_ASSOC);
 ?>

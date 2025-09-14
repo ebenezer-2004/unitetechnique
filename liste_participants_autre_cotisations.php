@@ -47,7 +47,7 @@ if (!empty($search)) {
   $query .= " WHERE nom LIKE :search OR prenom LIKE :search OR telephone LIKE :search";
 }
 
-$query .= " ORDER BY id_cont DESC LIMIT :offset, :parpage";
+// $query .= " ORDER BY id_cont DESC LIMIT :offset, :parpage";
 
 // Préparer la requête
 $pst = $con->prepare($query);
@@ -57,8 +57,8 @@ if (!empty($search)) {
   $pst->bindValue(':search', "%$search%", PDO::PARAM_STR);
 }
 
-$pst->bindValue(':offset', $offset, PDO::PARAM_INT);
-$pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
+// $pst->bindValue(':offset', $offset, PDO::PARAM_INT);
+// $pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
 
 $pst->execute();
 $values = $pst->fetchAll(PDO::FETCH_ASSOC);

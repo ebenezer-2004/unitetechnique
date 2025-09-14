@@ -35,7 +35,9 @@ if (!empty($search)) {
   $params[':search'] = "%$search%";
 }
 
-$query .= "ORDER BY nom,prenom LIMIT :offset, :parpage";
+// $query .= "ORDER BY nom,prenom LIMIT :offset, :parpage";
+$query .= "ORDER BY nom,prenom";
+
 
 $pst = $con->prepare($query);
 
@@ -45,8 +47,8 @@ if (!empty($params)) {
   }
 }
 
-$pst->bindValue(':offset', $offset, PDO::PARAM_INT);
-$pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
+// $pst->bindValue(':offset', $offset, PDO::PARAM_INT);
+// $pst->bindValue(':parpage', $parpage, PDO::PARAM_INT);
 
 $pst->execute();
 
@@ -107,6 +109,7 @@ $lesmembres = $pst->fetchAll(PDO::FETCH_ASSOC);
               <a href="ajouterMembre.php" class="btn btn-primary btn-round">Nouveau</a>
             </div>
           </div>
+          
 
           <?php if (isset($_SESSION['message'])) { ?>
             <div class="alert alert-success">
