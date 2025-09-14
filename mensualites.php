@@ -56,7 +56,9 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
   <script src="assets/js/plugin/webfont/webfont.min.js"></script>
   <script>
     WebFont.load({
-      google: { families: ["Public Sans:300,400,500,600,700"] },
+      google: {
+        families: ["Public Sans:300,400,500,600,700"]
+      },
       custom: {
         families: [
           "Font Awesome 5 Solid",
@@ -83,10 +85,8 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
 
 <style>
   .card .card-text {
-  margin-bottom: 0.5rem;
-}
-
-
+    margin-bottom: 0.5rem;
+  }
 </style>
 
 <body>
@@ -111,17 +111,17 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
           <?php
           if (isset($_SESSION['message'])) {
             ?>
-            <div class="alert alert-success">
-              <?= $_SESSION['message'] ?>
-            </div>
+          <div class="alert alert-success">
+            <?= $_SESSION['message'] ?>
+          </div>
 
-            <?php
+          <?php
 
           } elseif (isset($_SESSION['error'])) {
             ?>
-            <div class="alert alert-danger">
-              <?= $_SESSION['error'] ?>
-            </div>
+          <div class="alert alert-danger">
+            <?= $_SESSION['error'] ?>
+          </div>
           <?php }
           unset($_SESSION['message']);
           unset($_SESSION['error'])
@@ -223,11 +223,11 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                  <form class="d-flex w-25 mt-3 w-100" action="" method="GET">
+                  <!-- <form class="d-flex w-25 mt-3 w-100" action="" method="GET">
                     <input class="form-control form-control-sm me-2 h-25" type="search" name="search"
                       placeholder="Rechercher..." aria-label="Rechercher">
                     <button class="btn btn-sm btn-primary" type="submit">Rechercher</button>
-                  </form>
+                  </form> -->
                 </div>
                 <div class="card-body">
                   <!-- Version Desktop (table) -->
@@ -247,26 +247,26 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
                         if ($rs) {
                           foreach ($rs as $res) {
                             ?>
-                            <tr>
-                              <td><?= $res['nom'] ?></td>
-                              <td><?= $res['prenom'] ?></td>
-                              <td><?= number_format($res['montant'], "1", ",") . " " . "fcfa" ?></td>
-                              <td><?= date_format(date_create($res['datepayement']), "d-m-Y") ?></td>
-                              <td>
-                                <a class="btn btn-outline-secondary"
-                                  href="./modifierMensualite.php?id=<?= $res['id_cotisation'] ?>&idm=<?= $res['id_membre'] ?>">
-                                  <i class="far fa-edit" style='font-size: 20px;'></i>
-                                </a>
-                                <a class="btn btn-outline-danger"
-                                  href="./supprimerMensualite.php?id=<?= $res['id_cotisation'] ?>"
-                                  onclick="return confirm('Voulez-vous vraiment effectuer la suppression?')">
-                                  <i class="far fa-trash-alt"></i>
-                                </a>
-                              </td>
-                            </tr>
-                          <?php }
+                        <tr>
+                          <td><?= $res['nom'] ?></td>
+                          <td><?= $res['prenom'] ?></td>
+                          <td><?= number_format($res['montant'], "1", ",") . " " . "fcfa" ?></td>
+                          <td><?= date_format(date_create($res['datepayement']), "d-m-Y") ?></td>
+                          <td>
+                            <a class="btn btn-outline-secondary"
+                              href="./modifierMensualite.php?id=<?= $res['id_cotisation'] ?>&idm=<?= $res['id_membre'] ?>">
+                              <i class="far fa-edit" style='font-size: 20px;'></i>
+                            </a>
+                            <a class="btn btn-outline-danger"
+                              href="./supprimerMensualite.php?id=<?= $res['id_cotisation'] ?>"
+                              onclick="return confirm('Voulez-vous vraiment effectuer la suppression?')">
+                              <i class="far fa-trash-alt"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <?php }
                         } else { ?>
-                          <td colspan="5" class="text-center">Aucune information disponible</td>
+                        <td colspan="5" class="text-center">Aucune information disponible</td>
                         <?php } ?>
                       </tbody>
                     </table>
@@ -278,84 +278,32 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
                     if ($rs) {
                       foreach ($rs as $res) {
                         ?>
-                        <div class="card mb-3">
-                          <div class="card-body">
-                            <h5 class="card-title">Nom: <?= $res['nom'] ?></h5>
-                            <p class="card-text">Prénom: <?= $res['prenom'] ?></p>
-                            <p class="card-text">Montant: <?= number_format($res['montant'], "1", ",") . " " . "fcfa" ?></p>
-                            <p class="card-text">Date de Cotisation:
-                              <?= date_format(date_create($res['datepayement']), "d-m-Y") ?></p>
-                            <div class="d-flex">
-                              <a class="btn btn-outline-secondary me-2"
-                                href="./modifierMensualite.php?id=<?= $res['id_cotisation'] ?>&idm=<?= $res['id_membre'] ?>">
-                                <i class="far fa-edit"></i>
-                              </a>
-                              <a class="btn btn-outline-danger"
-                                href="./supprimerMensualite.php?id=<?= $res['id_cotisation'] ?>"
-                                onclick="return confirm('Voulez-vous vraiment effectuer la suppression?')">
-                                <i class="far fa-trash-alt"></i>
-                              </a>
-                            </div>
-                          </div>
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h5 class="card-title">Nom: <?= $res['nom'] ?></h5>
+                        <p class="card-text">Prénom: <?= $res['prenom'] ?></p>
+                        <p class="card-text">Montant: <?= number_format($res['montant'], "1", ",") . " " . "fcfa" ?></p>
+                        <p class="card-text">Date de Cotisation:
+                          <?= date_format(date_create($res['datepayement']), "d-m-Y") ?></p>
+                        <div class="d-flex">
+                          <a class="btn btn-outline-secondary me-2"
+                            href="./modifierMensualite.php?id=<?= $res['id_cotisation'] ?>&idm=<?= $res['id_membre'] ?>">
+                            <i class="far fa-edit"></i>
+                          </a>
+                          <a class="btn btn-outline-danger"
+                            href="./supprimerMensualite.php?id=<?= $res['id_cotisation'] ?>"
+                            onclick="return confirm('Voulez-vous vraiment effectuer la suppression?')">
+                            <i class="far fa-trash-alt"></i>
+                          </a>
                         </div>
-                      <?php }
+                      </div>
+                    </div>
+                    <?php }
                     } else { ?>
-                      <p class="text-center">Aucune information disponible</p>
+                    <p class="text-center">Aucune information disponible</p>
                     <?php } ?>
                   </div>
 
-                  <?php if ($rs) {
-  $range = 10; // Nombre de pages visibles max
-  $start = max(1, $current - floor($range / 2));
-  $end = min($pages, $start + $range - 1);
-
-  if ($end - $start + 1 < $range) {
-    $start = max(1, $end - $range + 1);
-  }
-?>
-  <nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-
-      <!-- Précédent -->
-      <li class="page-item <?= $current == 1 ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $current - 1 ?>&search=<?= urlencode($search) ?>">Précédent</a>
-      </li>
-
-      <!-- Première page + ... -->
-      <?php if ($start > 1): ?>
-        <li class="page-item">
-          <a class="page-link" href="?page=1&search=<?= urlencode($search) ?>">1</a>
-        </li>
-        <?php if ($start > 2): ?>
-          <li class="page-item disabled"><span class="page-link">...</span></li>
-        <?php endif; ?>
-      <?php endif; ?>
-
-      <!-- Pages visibles -->
-      <?php for ($i = $start; $i <= $end; $i++): ?>
-        <li class="page-item <?= $i == $current ? 'active' : '' ?>">
-          <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
-        </li>
-      <?php endfor; ?>
-
-      <!-- ... + Dernière page -->
-      <?php if ($end < $pages): ?>
-        <?php if ($end < $pages - 1): ?>
-          <li class="page-item disabled"><span class="page-link">...</span></li>
-        <?php endif; ?>
-        <li class="page-item">
-          <a class="page-link" href="?page=<?= $pages ?>&search=<?= urlencode($search) ?>"><?= $pages ?></a>
-        </li>
-      <?php endif; ?>
-
-      <!-- Suivant -->
-      <li class="page-item <?= $current == $pages ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $current + 1 ?>&search=<?= urlencode($search) ?>">Suivant</a>
-      </li>
-
-    </ul>
-  </nav>
-<?php } ?>
 
                 </div>
               </div>
@@ -397,6 +345,63 @@ $rs = $pst->fetchAll(PDO::FETCH_ASSOC);
       <!-- Kaiadmin DEMO methods, don't include it in your project! -->
       <script src="assets/js/setting-demo.js"></script>
       <script src="assets/js/demo.js"></script>
+       <script>
+      $(document).ready(function () {
+        $("#basic-datatables").DataTable({});
+
+        $("#multi-filter-select").DataTable({
+          pageLength: 5,
+          initComplete: function () {
+            this.api()
+              .columns()
+              .every(function () {
+                var column = this;
+                var select = $(
+                  '<select class="form-select"><option value=""></option></select>'
+                )
+                  .appendTo($(column.footer()).empty())
+                  .on("change", function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                    column
+                      .search(val ? "^" + val + "$" : "", true, false)
+                      .draw();
+                  });
+
+                column
+                  .data()
+                  .unique()
+                  .sort()
+                  .each(function (d, j) {
+                    select.append(
+                      '<option value="' + d + '">' + d + "</option>"
+                    );
+                  });
+              });
+          },
+        });
+
+        // Add Row
+        $("#add-row").DataTable({
+          pageLength: 5,
+        });
+
+        var action =
+          '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+        $("#addRowButton").click(function () {
+          $("#add-row")
+            .dataTable()
+            .fnAddData([
+              $("#addName").val(),
+              $("#addPosition").val(),
+              $("#addOffice").val(),
+              action,
+            ]);
+          $("#addRowModal").modal("hide");
+        });
+      });
+    </script>
 
 </body>
 

@@ -154,11 +154,11 @@ $values = $pst->fetchAll(PDO::FETCH_ASSOC);
                     <div class="col-md-12">
                       <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                          <form class="d-flex w-25 mt-3 w-100" action="" method="GET">
+                          <!-- <form class="d-flex w-25 mt-3 w-100" action="" method="GET">
                             <input class="form-control form-control-sm me-2 h-25" type="search" name="search"
                               placeholder="Rechercher..." aria-label="Rechercher">
                             <button class="btn btn-sm btn-primary" type="submit">Rechercher</button>
-                          </form>
+                          </form> -->
                         </div>
 
                         <div class="card-body">
@@ -230,59 +230,7 @@ $values = $pst->fetchAll(PDO::FETCH_ASSOC);
                             <?php } ?>
                           </div>
 
-                         <?php if ($values) {
-  $range = 10; // Nombre maximum de pages visibles
-  $start = max(1, $current - floor($range / 2));
-  $end = min($pages, $start + $range - 1);
-
-  // Ajuster si début ou fin dépasse
-  if ($end - $start + 1 < $range) {
-    $start = max(1, $end - $range + 1);
-  }
-?>
-  <nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-
-      <!-- Précédent -->
-      <li class="page-item <?= $current == 1 ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $current - 1 ?>&search=<?= urlencode($search) ?>">Précédent</a>
-      </li>
-
-      <!-- Afficher la première page + "..." si besoin -->
-      <?php if ($start > 1): ?>
-        <li class="page-item">
-          <a class="page-link" href="?page=1&search=<?= urlencode($search) ?>">1</a>
-        </li>
-        <?php if ($start > 2): ?>
-          <li class="page-item disabled"><span class="page-link">...</span></li>
-        <?php endif; ?>
-      <?php endif; ?>
-
-      <!-- Pages dans la plage -->
-      <?php for ($i = $start; $i <= $end; $i++): ?>
-        <li class="page-item <?= $i == $current ? 'active' : '' ?>">
-          <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
-        </li>
-      <?php endfor; ?>
-
-      <!-- Afficher la dernière page + "..." si besoin -->
-      <?php if ($end < $pages): ?>
-        <?php if ($end < $pages - 1): ?>
-          <li class="page-item disabled"><span class="page-link">...</span></li>
-        <?php endif; ?>
-        <li class="page-item">
-          <a class="page-link" href="?page=<?= $pages ?>&search=<?= urlencode($search) ?>"><?= $pages ?></a>
-        </li>
-      <?php endif; ?>
-
-      <!-- Suivant -->
-      <li class="page-item <?= $current == $pages ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $current + 1 ?>&search=<?= urlencode($search) ?>">Suivant</a>
-      </li>
-
-    </ul>
-  </nav>
-<?php } ?>
+                      
 
                         </div>
                       </div>
@@ -319,6 +267,63 @@ $values = $pst->fetchAll(PDO::FETCH_ASSOC);
               <!-- Kaiadmin DEMO methods, don't include it in your project! -->
               <script src="assets/js/setting-demo.js"></script>
               <script src="assets/js/demo.js"></script>
+               <script>
+      $(document).ready(function () {
+        $("#basic-datatables").DataTable({});
+
+        $("#multi-filter-select").DataTable({
+          pageLength: 5,
+          initComplete: function () {
+            this.api()
+              .columns()
+              .every(function () {
+                var column = this;
+                var select = $(
+                  '<select class="form-select"><option value=""></option></select>'
+                )
+                  .appendTo($(column.footer()).empty())
+                  .on("change", function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                    column
+                      .search(val ? "^" + val + "$" : "", true, false)
+                      .draw();
+                  });
+
+                column
+                  .data()
+                  .unique()
+                  .sort()
+                  .each(function (d, j) {
+                    select.append(
+                      '<option value="' + d + '">' + d + "</option>"
+                    );
+                  });
+              });
+          },
+        });
+
+        // Add Row
+        $("#add-row").DataTable({
+          pageLength: 5,
+        });
+
+        var action =
+          '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+        $("#addRowButton").click(function () {
+          $("#add-row")
+            .dataTable()
+            .fnAddData([
+              $("#addName").val(),
+              $("#addPosition").val(),
+              $("#addOffice").val(),
+              action,
+            ]);
+          $("#addRowModal").modal("hide");
+        });
+      });
+    </script>
 
 </body>
 

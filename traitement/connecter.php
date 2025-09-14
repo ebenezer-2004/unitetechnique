@@ -17,6 +17,7 @@ if ($values) {
         $_SESSION['message'] = "Vous êtes connecté avec succès";
         $_SESSION['nom'] = $values['nom'];
         $_SESSION['prenom'] = $values['prenom'];
+         $_SESSION['role'] = $values['role'];
         $_SESSION['profil'] = $values['photo'];
         header('location: ../index.php');
         exit();
